@@ -5,7 +5,7 @@ description: A blog about astrophysics and statistics
 # url: "localhost:3000" # the base hostname & protocol for your site e.g. http://willianjusten.com.br
 
 # User settings
-username: |
+username: >
   Valentina  
   Di Marco
 user_description: I am a Bayesian Statistician with a MPhil in statistics. I am currently undertaking a PhD in Astrophysics applying my statistical knowledge to the detection of Gravitational Waves. 
