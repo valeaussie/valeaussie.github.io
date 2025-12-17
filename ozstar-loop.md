@@ -4,6 +4,13 @@ title: OzStar – Loop Script
 permalink: /ozstar-loop/
 ---
 
+###Why do we need etherna loops
+
+On OzSTAR, jobs requesting long wall times (e.g. 24 hours) often sit in the queue for a long time before starting.
+
+A common strategy is to request shorter wall times (e.g. 1–2 hours) and allow the loop to resubmit jobs immediately after completion.
+This can significantly reduce queue wait times.
+
 ## Overview
 
 This page documents a simple “eternal loop” wrapper for running jobs on OzStar (Slurm).
@@ -55,12 +62,49 @@ while true; do
 
     # Optional notification (can be replaced with a mail command)
     echo " [Notification] Job $JOB_ID finished at $(date)"
-done
-
+```
 
 ###How to run and stop the loop
+
 Make it executable (only once)
 ```bash
-chmod +x eternal_run_tbilby.sh
+chmod +x eternal_run.sh
+```
+Run it in the background
+```bash
+nohup ./eternal_run_tbilby.sh > loop_output.log 2>&1 &
+```
+Check if it is running
+```bash
+ps aux | grep eternal_run_tbilby
+```
+Stop it with
+```bash
+kill <PID>
+```
+or
+```bash
+pkill -f eternal_run.sh
+```
+Check Slurm jobs
+```bash
+squeue -u <your user name>
+```
+
+
+###Notes on Responsible Use
+
+This script submits jobs in an infinite loop.
+It is powerful and very useful, but must be used carefully on a shared system.
+
+Important cautions:
+
+- Run only one instance at a time. Multiple loops will submit duplicate jobs.
+- Do not forget it is running!
+- The script will not stop on its own.
+- Avoid unstable jobs. If jobs fail immediately, the loop may resubmit continuously.
+
+
+
 done
 
