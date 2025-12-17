@@ -3731,3 +3731,23 @@ sub,sup{
 .header-link:hover {
   background: rgba(128, 90, 213, 0.18);
 }
+
+/* Small header for non-home pages */
+.header-small {
+  width: 100%;
+  background: #1a222c;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.header-small-link {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.header-small-link:hover {
+  text-decoration: underline;
+}
+
