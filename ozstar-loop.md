@@ -57,3 +57,10 @@ while true; do
     echo " [Notification] Job $JOB_ID finished at $(date)"
 done
 
+
+###How to run and stop the loop
+Make it executable (only once)
+```bash
+chmod +x eternal_run_tbilby.sh
+done
+
