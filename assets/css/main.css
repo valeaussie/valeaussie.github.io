@@ -3720,7 +3720,7 @@ sub,sup{
 }
 
 /* Clicable header */
-.header-home {
+.header-link {
   display: inline-block;   /* clickable area hugs the title block */
   padding: 10px 14px;      /* makes it feel like a box */
   border-radius: 10px;
@@ -3728,6 +3728,6 @@ sub,sup{
   color: inherit;
 }
 
-.header-home:hover {
+.header-link:hover {
   background: rgba(128, 90, 213, 0.18);
 }
