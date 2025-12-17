@@ -24,7 +24,7 @@ It repeatedly:
 
 ---
 
-## Script: `eternal_run.sh`
+## Script: `eternal_run.sh` 
 
 Save the following as `eternal_run_.sh`:
 
@@ -41,7 +41,7 @@ echo "Log file: $LOG_FILE"
 
 while true; do
     # Submit the job
-    JOB_OUTPUT=$(sbatch launch_your_job)
+    JOB_OUTPUT=$(sbatch your_job.sh)
     
     # Extract job ID
     JOB_ID=$(echo "$JOB_OUTPUT" | awk '{print $4}')
@@ -64,6 +64,8 @@ while true; do
     echo " [Notification] Job $JOB_ID finished at $(date)"
 ```
 
+In the above script `your_job.sh` is your bash script containing the slurm directives.
+
 ##How to run and stop the loop
 
 Make it executable (only once)
@@ -72,11 +74,11 @@ chmod +x eternal_run.sh
 ```
 Run it in the background
 ```bash
-nohup ./eternal_run_tbilby.sh > loop_output.log 2>&1 &
+nohup ./eternal_run.sh > loop_output.log 2>&1 &
 ```
 Check if it is running
 ```bash
-ps aux | grep eternal_run_tbilby
+ps aux | grep eternal_run
 ```
 Stop it with
 ```bash
