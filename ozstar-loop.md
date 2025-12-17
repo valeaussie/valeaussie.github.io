@@ -4,7 +4,7 @@ title: OzStar – Loop Script
 permalink: /ozstar-loop/
 ---
 
-###Why do we need etherna loops
+###Why do we need eternal loops
 
 On OzSTAR, jobs requesting long wall times (e.g. 24 hours) often sit in the queue for a long time before starting.
 
@@ -64,7 +64,7 @@ while true; do
     echo " [Notification] Job $JOB_ID finished at $(date)"
 ```
 
-###How to run and stop the loop
+##How to run and stop the loop
 
 Make it executable (only once)
 ```bash
@@ -92,7 +92,7 @@ squeue -u <your user name>
 ```
 
 
-###Notes on Responsible Use
+##Notes on Responsible Use
 
 This script submits jobs in an infinite loop.
 It is powerful and very useful, but must be used carefully on a shared system.
