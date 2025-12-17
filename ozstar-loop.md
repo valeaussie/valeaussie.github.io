@@ -106,7 +106,3 @@ Important cautions:
 - The script will not stop on its own.
 - Avoid unstable jobs. If jobs fail immediately, the loop may resubmit continuously.
 
-
-
-done
-
