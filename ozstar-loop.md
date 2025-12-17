@@ -4,7 +4,7 @@ title: OzStar – Loop Script
 permalink: /ozstar-loop/
 ---
 
-###Why do we need eternal loops
+##Why do we need eternal loops
 
 On OzSTAR, jobs requesting long wall times (e.g. 24 hours) often sit in the queue for a long time before starting.
 
