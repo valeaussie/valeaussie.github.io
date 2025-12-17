@@ -8,7 +8,7 @@ permalink: /ozstar-loop/
 
 On OzSTAR, jobs requesting long wall times (e.g. 24 hours) often sit in the queue for a long time before starting.
 
-A common strategy is to request shorter wall times (e.g. 1–2 hours) and allow the loop to resubmit jobs immediately after completion.
+To avoid this, we can request shorter wall times (e.g. 1–2 hours) and allow the loop to resubmit jobs immediately after completion.
 This can significantly reduce queue wait times.
 
 ## Overview
