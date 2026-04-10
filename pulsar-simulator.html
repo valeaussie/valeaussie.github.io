@@ -4,6 +4,27 @@ title: Pulsar Signal Simulator
 permalink: /pulsar-simulator/
 ---
 
+<div class="user-details" style="text-align: center; padding-bottom: 1rem;">
+  <h1>PULSAR SIGNAL SIMULATOR</h1>
+</div>
+
+<div style="max-width: 720px; margin: 0 auto 2rem; font-family: sans-serif; font-size: 0.95rem; line-height: 1.7; color: #444; padding: 0 1rem;">
+  <p>
+    Radio pulsars are rapidly rotating neutron stars that emit beams of radio waves, producing a highly regular train of pulses as the beam sweeps past Earth. When a pulsar is in a binary system orbiting a companion star, its apparent pulse frequency shifts due to the Doppler effect, making it much harder to detect in standard Fourier-based searches.
+  </p>
+  <p>
+    This simulator lets you explore those two key ideas. The <strong>time series</strong> shows intensity versus time: a periodic spike train representing the pulses as a radio telescope would record them, embedded in noise. The <strong>Fourier spectrum</strong> shows where the signal's power concentrates in frequency space — a sharp peak at the pulse frequency and its harmonics when the signal is coherent, which smears out when Doppler drift is applied.
+  </p>
+  <p>
+    This tool accompanies the study of a new semi-coherent detection method based on a hidden Markov model (HMM) designed to recover pulsars in compact binaries despite strong Doppler modulation. See the paper for full details:
+  </p>
+  <p>
+    <a href="https://iopscience.iop.org/article/10.3847/1538-4357/ae3288" target="_blank" rel="noopener noreferrer" style="color: #0f6e56; font-weight: 600;">
+      O'Leary et al. (2026) — Discovering Radio Pulsars in Compact Binaries with a Hidden Markov Model, <em>The Astrophysical Journal</em>
+    </a>
+  </p>
+</div>
+
 <style>
   .pulsar-sim {
     font-family: 'Courier New', monospace;
