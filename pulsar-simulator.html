@@ -1,0 +1,425 @@
+---
+layout: default
+title: Pulsar Signal Simulator
+---
+<!-- 
+  PULSAR SIGNAL & FFT SIMULATOR
+  ==============================
+  Drop this file into your Jekyll site root (or any HTML site).
+  If you're NOT using Jekyll, delete the three lines above (the --- front matter block).
+
+  Dependencies: Chart.js (loaded from CDN, no install needed)
+-->
+
+<style>
+  .pulsar-sim {
+    font-family: 'Courier New', monospace;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #1a1a2e;
+  }
+
+  .pulsar-sim h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.25rem;
+    color: #1a1a2e;
+  }
+
+  .pulsar-sim .subtitle {
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-family: sans-serif;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .ps-panel {
+    background: #f8f8f4;
+    border: 1px solid #e2e2d8;
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .ps-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    font-family: sans-serif;
+    margin-bottom: 0.8rem;
+  }
+
+  .ps-controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .ps-controls-grid { grid-template-columns: 1fr; }
+    .ps-charts-row { grid-template-columns: 1fr !important; }
+    .ps-stats-row { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+
+  .ps-ctrl {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ps-ctrl label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-family: sans-serif;
+  }
+
+  .ps-ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ps-ctrl-row input[type="range"] {
+    flex: 1;
+    accent-color: #0f6e56;
+    height: 4px;
+    cursor: pointer;
+  }
+
+  .ps-val {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    min-width: 54px;
+    text-align: right;
+  }
+
+  .ps-charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .ps-chart-wrap {
+    position: relative;
+    height: 210px;
+  }
+
+  .ps-toggle-row {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .ps-tog {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-family: sans-serif;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .ps-tog input { cursor: pointer; accent-color: #0f6e56; }
+
+  .ps-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    text-align: center;
+  }
+
+  .ps-stat-label {
+    font-size: 0.68rem;
+    color: #9ca3af;
+    font-family: sans-serif;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ps-stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+</style>
+
+<div class="pulsar-sim">
+  <h1>Pulsar Signal Simulator</h1>
+  <p class="subtitle">Interactive time-series and Fourier spectrum explorer</p>
+
+  <div class="ps-panel">
+    <div class="ps-section-label">Signal parameters</div>
+    <div class="ps-controls-grid">
+      <div class="ps-ctrl">
+        <label>Pulse period (s)</label>
+        <div class="ps-ctrl-row">
+          <input type="range" id="ps-period" min="0.05" max="2" step="0.01" value="0.5">
+          <span class="ps-val" id="ps-period-val">0.50 s</span>
+        </div>
+      </div>
+      <div class="ps-ctrl">
+        <label>Pulse width (% of period)</label>
+        <div class="ps-ctrl-row">
+          <input type="range" id="ps-width" min="2" max="40" step="1" value="8">
+          <span class="ps-val" id="ps-width-val">8%</span>
+        </div>
+      </div>
+      <div class="ps-ctrl">
+        <label>Pulse amplitude</label>
+        <div class="ps-ctrl-row">
+          <input type="range" id="ps-amp" min="0.5" max="5" step="0.1" value="2">
+          <span class="ps-val" id="ps-amp-val">2.0</span>
+        </div>
+      </div>
+      <div class="ps-ctrl">
+        <label>Noise level</label>
+        <div class="ps-ctrl-row">
+          <input type="range" id="ps-noise" min="0" max="3" step="0.05" value="0.6">
+          <span class="ps-val" id="ps-noise-val">0.60</span>
+        </div>
+      </div>
+      <div class="ps-ctrl">
+        <label>Observation time (s)</label>
+        <div class="ps-ctrl-row">
+          <input type="range" id="ps-tobs" min="2" max="20" step="0.5" value="8">
+          <span class="ps-val" id="ps-tobs-val">8.0 s</span>
+        </div>
+      </div>
+      <div class="ps-ctrl">
+        <label>Doppler drift (Hz/s)</label>
+        <div class="ps-ctrl-row">
+          <input type="range" id="ps-doppler" min="0" max="2" step="0.05" value="0">
+          <span class="ps-val" id="ps-doppler-val">0.00</span>
+        </div>
+      </div>
+    </div>
+    <div class="ps-toggle-row">
+      <label class="ps-tog"><input type="checkbox" id="ps-show-fund" checked> Mark fundamental</label>
+      <label class="ps-tog"><input type="checkbox" id="ps-show-harm" checked> Mark harmonics</label>
+    </div>
+  </div>
+
+  <div class="ps-charts-row">
+    <div class="ps-panel">
+      <div class="ps-section-label">Time series — intensity vs time</div>
+      <div class="ps-chart-wrap">
+        <canvas id="ps-time-chart" role="img" aria-label="Pulsar time series with periodic pulses and noise"></canvas>
+      </div>
+    </div>
+    <div class="ps-panel">
+      <div class="ps-section-label">Fourier spectrum — power vs frequency</div>
+      <div class="ps-chart-wrap">
+        <canvas id="ps-fft-chart" role="img" aria-label="FFT power spectrum with fundamental and harmonic peaks"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-panel">
+    <div class="ps-stats-row">
+      <div>
+        <div class="ps-stat-label">Pulse freq</div>
+        <div class="ps-stat-value" id="ps-stat-freq">2.00 Hz</div>
+      </div>
+      <div>
+        <div class="ps-stat-label">SNR</div>
+        <div class="ps-stat-value" id="ps-stat-snr">—</div>
+      </div>
+      <div>
+        <div class="ps-stat-label">N pulses</div>
+        <div class="ps-stat-value" id="ps-stat-npulses">—</div>
+      </div>
+      <div>
+        <div class="ps-stat-label">FFT bins</div>
+        <div class="ps-stat-value" id="ps-stat-bins">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+(function () {
+  const N = 4096;
+
+  function randn() {
+    let u = 0, v = 0;
+    while (!u) u = Math.random();
+    while (!v) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  function generateSignal(period, widthFrac, amp, noise, tobs, doppler) {
+    const dt = tobs / N;
+    const times = [], signal = [];
+    for (let i = 0; i < N; i++) {
+      const t = i * dt;
+      const fp = (1 / period) + doppler * t;
+      const phase = (t * fp) % 1.0;
+      const pulse = phase < widthFrac
+        ? amp * Math.exp(-0.5 * Math.pow((phase - widthFrac / 2) / (widthFrac / 4), 2))
+        : 0;
+      times.push(t);
+      signal.push(pulse + noise * randn());
+    }
+    return { times, signal, dt };
+  }
+
+  function fft(re, im) {
+    const n = re.length;
+    if (n <= 1) return;
+    const re_e = [], im_e = [], re_o = [], im_o = [];
+    for (let i = 0; i < n / 2; i++) {
+      re_e.push(re[2*i]); im_e.push(im[2*i]);
+      re_o.push(re[2*i+1]); im_o.push(im[2*i+1]);
+    }
+    fft(re_e, im_e); fft(re_o, im_o);
+    for (let k = 0; k < n / 2; k++) {
+      const a = -2 * Math.PI * k / n;
+      const wr = Math.cos(a), wi = Math.sin(a);
+      const tr = wr * re_o[k] - wi * im_o[k];
+      const ti = wr * im_o[k] + wi * re_o[k];
+      re[k] = re_e[k] + tr; im[k] = im_e[k] + ti;
+      re[k + n/2] = re_e[k] - tr; im[k + n/2] = im_e[k] - ti;
+    }
+  }
+
+  function computePower(signal) {
+    const re = [...signal], im = new Array(signal.length).fill(0);
+    fft(re, im);
+    return re.slice(0, signal.length / 2).map((r, i) => r*r + im[i]*im[i]);
+  }
+
+  const SIG_COLOR = '#0f6e56';
+  const FFT_COLOR = '#185fa5';
+  const FUND_COLOR = '#ba7517';
+  const HARM_COLOR = '#a32d2d';
+  const GRID = 'rgba(0,0,0,0.06)';
+  const TICK = '#9ca3af';
+
+  const axisStyle = (label) => ({
+    ticks: { color: TICK, font: { size: 11, family: 'Courier New, monospace' }, maxTicksLimit: 6 },
+    grid: { color: GRID },
+    border: { display: false },
+    title: { display: true, text: label, color: TICK, font: { size: 11 } }
+  });
+
+  const baseOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 80 },
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    elements: { point: { radius: 0 } }
+  };
+
+  const timeChart = new Chart(document.getElementById('ps-time-chart'), {
+    type: 'line',
+    data: { labels: [], datasets: [{ data: [], borderColor: SIG_COLOR, borderWidth: 1.2, fill: false, tension: 0 }] },
+    options: { ...baseOpts, scales: { x: axisStyle('time (s)'), y: axisStyle('intensity') } }
+  });
+
+  const fftChart = new Chart(document.getElementById('ps-fft-chart'), {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        { data: [], borderColor: FFT_COLOR, borderWidth: 1.2, fill: true, backgroundColor: 'rgba(24,95,165,0.07)', tension: 0 },
+        { data: [], borderColor: FUND_COLOR, borderWidth: 0, pointRadius: 6, pointStyle: 'triangle', backgroundColor: FUND_COLOR, showLine: false },
+        { data: [], borderColor: HARM_COLOR, borderWidth: 0, pointRadius: 4, pointStyle: 'circle', backgroundColor: HARM_COLOR, showLine: false }
+      ]
+    },
+    options: { ...baseOpts, scales: { x: axisStyle('frequency (Hz)'), y: axisStyle('power') } }
+  });
+
+  function getParams() {
+    return {
+      period: parseFloat(document.getElementById('ps-period').value),
+      widthFrac: parseFloat(document.getElementById('ps-width').value) / 100,
+      amp: parseFloat(document.getElementById('ps-amp').value),
+      noise: parseFloat(document.getElementById('ps-noise').value),
+      tobs: parseFloat(document.getElementById('ps-tobs').value),
+      doppler: parseFloat(document.getElementById('ps-doppler').value),
+      showFund: document.getElementById('ps-show-fund').checked,
+      showHarm: document.getElementById('ps-show-harm').checked,
+    };
+  }
+
+  function update() {
+    const p = getParams();
+    const { times, signal, dt } = generateSignal(p.period, p.widthFrac, p.amp, p.noise, p.tobs, p.doppler);
+
+    const stride = Math.max(1, Math.floor(N / 512));
+    const tLabels = [], tData = [];
+    for (let i = 0; i < N; i += stride) {
+      tLabels.push(times[i].toFixed(2));
+      tData.push(parseFloat(signal[i].toFixed(3)));
+    }
+    timeChart.data.labels = tLabels;
+    timeChart.data.datasets[0].data = tData;
+    timeChart.update('none');
+
+    const power = computePower(signal);
+    const df = 1 / (N * dt);
+    const maxBin = Math.min(power.length, Math.floor(20 / df));
+    const fStride = Math.max(1, Math.floor(maxBin / 512));
+    const fLabels = [], fData = [];
+    for (let i = 1; i < maxBin; i += fStride) {
+      fLabels.push((i * df).toFixed(2));
+      fData.push(parseFloat(power[i].toFixed(1)));
+    }
+
+    const fp = 1 / p.period;
+    const fundData = [], harmData = [];
+    if (p.showFund) {
+      const b = Math.round(fp / df);
+      if (b > 0 && b < maxBin) fundData.push({ x: (b * df).toFixed(2), y: parseFloat(power[b].toFixed(1)) });
+    }
+    if (p.showHarm) {
+      for (let h = 2; h <= 6; h++) {
+        const b = Math.round(h * fp / df);
+        if (b > 0 && b < maxBin) harmData.push({ x: (b * df).toFixed(2), y: parseFloat(power[b].toFixed(1)) });
+      }
+    }
+
+    fftChart.data.labels = fLabels;
+    fftChart.data.datasets[0].data = fData;
+    fftChart.data.datasets[1].data = fundData;
+    fftChart.data.datasets[2].data = harmData;
+    fftChart.update('none');
+
+    const noiseFloor = p.noise > 0 ? p.noise * p.noise * N / 4 : 1;
+    const peakBin = Math.round(fp / df);
+    const snr = peakBin < power.length ? (power[peakBin] / noiseFloor).toFixed(1) : '—';
+
+    document.getElementById('ps-stat-freq').textContent = fp.toFixed(2) + ' Hz';
+    document.getElementById('ps-stat-snr').textContent = snr + 'x';
+    document.getElementById('ps-stat-npulses').textContent = Math.floor(p.tobs / p.period);
+    document.getElementById('ps-stat-bins').textContent = maxBin;
+
+    document.getElementById('ps-period-val').textContent = p.period.toFixed(2) + ' s';
+    document.getElementById('ps-width-val').textContent = (p.widthFrac * 100).toFixed(0) + '%';
+    document.getElementById('ps-amp-val').textContent = p.amp.toFixed(1);
+    document.getElementById('ps-noise-val').textContent = p.noise.toFixed(2);
+    document.getElementById('ps-tobs-val').textContent = p.tobs.toFixed(1) + ' s';
+    document.getElementById('ps-doppler-val').textContent = p.doppler.toFixed(2);
+  }
+
+  ['ps-period','ps-width','ps-amp','ps-noise','ps-tobs','ps-doppler'].forEach(id => {
+    document.getElementById(id).addEventListener('input', update);
+  });
+  ['ps-show-fund','ps-show-harm'].forEach(id => {
+    document.getElementById(id).addEventListener('change', update);
+  });
+
+  update();
+})();
+</script>
